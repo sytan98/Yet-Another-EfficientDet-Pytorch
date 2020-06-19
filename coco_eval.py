@@ -60,8 +60,7 @@ def evaluate_coco(img_path, set_name, image_ids, coco, model, threshold=0.05):
 
     for image_id in tqdm(image_ids):
         image_info = coco.loadImgs(image_id)[0]
-        image_path = img_path + image_info['file_name']
-
+        image_path = img_path + '/' + image_info['file_name']
         ori_imgs, framed_imgs, framed_metas = preprocess(image_path, max_size=input_sizes[compound_coef])
         x = torch.from_numpy(framed_imgs[0])
 
@@ -97,7 +96,6 @@ def evaluate_coco(img_path, set_name, image_ids, coco, model, threshold=0.05):
             rois[:, 3] -= rois[:, 1]
 
             bbox_score = scores
-
             for roi_id in range(rois.shape[0]):
                 score = float(bbox_score[roi_id])
                 label = int(class_ids[roi_id])
@@ -146,7 +144,7 @@ if __name__ == '__main__':
     if override_prev_results or not os.path.exists(f'{SET_NAME}_bbox_results.json'):
         model = EfficientDetBackbone(compound_coef=compound_coef, num_classes=len(obj_list),
                                      ratios=eval(params['anchors_ratios']), scales=eval(params['anchors_scales']))
-        model.load_state_dict(torch.load(weights_path, map_location=torch.device('cpu')))
+        model.load_state_dict(torch.load(weights_path))
         model.requires_grad_(False)
         model.eval()
 

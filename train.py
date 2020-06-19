@@ -87,7 +87,7 @@ class ModelWithLoss(nn.Module):
 
 
 def train(opt):
-    params = Params(f'projects/{opt.project}.yml')
+    params = Params(f'{opt.project}.yml')
 
     if params.num_gpus == 0:
         os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
