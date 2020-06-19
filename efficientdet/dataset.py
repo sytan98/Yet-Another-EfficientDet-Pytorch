@@ -49,7 +49,7 @@ class CocoDataset(Dataset):
 
     def __getitem__(self, idx):
 
-        img = self.load_image(idx)
+        img,h,w = self.load_image(idx)
         annot = self.load_annotations(idx)
         sample = {'img': img, 'annot': annot}
         if self.transform:
@@ -60,11 +60,12 @@ class CocoDataset(Dataset):
         image_info = self.coco.loadImgs(self.image_ids[image_index])[0]
         path = os.path.join(self.root_dir, self.set_name, self.set_name, image_info['file_name'])
         img = cv2.imread(path)
+        h,w,_ = img.shape
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
-        return img.astype(np.float32) / 255.
+        return img.astype(np.float32) / 255. , h, w
 
-    def load_annotations(self, image_index):
+    def load_annotations(self, image_index, h, w):
         # get ground truth annotations
         annotations_ids = self.coco.getAnnIds(imgIds=self.image_ids[image_index], iscrowd=False)
         annotations = np.zeros((0, 5))
