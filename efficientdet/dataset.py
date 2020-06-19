@@ -80,7 +80,19 @@ class CocoDataset(Dataset):
             # some annotations have basically no width / height, skip them
             if a['bbox'][2] < 1 or a['bbox'][3] < 1:
                 continue
-
+            if a['bbox'][0] < 0:
+                print("off x min")
+                a['bbox'][0] = 0
+            if a['bbox'][1]< 0:
+                print("off y min")
+                a['bbox'][1] = 0
+            if a['bbox'][0] + a['bbox'][2] > w:
+                print("off x max")
+                a['bbox'][2] = w - a['bbox'][0]
+            if a['bbox'][1] + a['bbox'][3] > h:
+                print("off y max")
+                a['bbox'][3] = h - a['bbox'][1]
+                
             annotation = np.zeros((1, 5))
             annotation[0, :4] = a['bbox']
             annotation[0, 4] = a['category_id'] - 1
